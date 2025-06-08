@@ -79,5 +79,8 @@ public class Joystick {
         return stage;
     }
 
+    public void reset(){
+      //  touchpad.setValue(0, 0);
+    }
 }
 

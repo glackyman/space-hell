@@ -17,8 +17,8 @@ import com.juego.Javier.scenes.GameScene;
 
 public class ShooterEnemy extends EnemyShip {
 
-    private float followDistance = 8f; // Distancia a la que seguirá al jugador
-    private float followSpeed = 1.5f; // Velocidad de seguimiento
+    private float followDistance = 15f; // Distancia a la que seguirá al jugador
+    private float followSpeed = 90.5f; // Velocidad de seguimiento
 
 
     private float shootTimer = 0;
@@ -34,33 +34,36 @@ public class ShooterEnemy extends EnemyShip {
 
     @Override
     public void update(float delta, Vector2 playerPosition) {
-        super.update(delta,playerPosition);
+        super.update(delta, playerPosition);
+
         Vector2 enemyPos = getBody().getPosition();
         Vector2 toPlayer = new Vector2(playerPosition).sub(enemyPos);
         float distance = toPlayer.len();
 
-        // Seguir al jugador manteniendo una distancia
+        // Movimiento suave con interpolación
+        Vector2 targetVelocity = new Vector2();
+
         if (distance > followDistance) {
-            toPlayer.nor().scl(followSpeed); // Acercarse al jugador
+            toPlayer.nor().scl(followSpeed); // Acercarse
+            targetVelocity.set(toPlayer);
         } else if (distance < followDistance - 2f) {
-            toPlayer.nor().scl(-followSpeed); // Alejarse si está demasiado cerca
+            toPlayer.nor().scl(-followSpeed); // Alejarse
+            targetVelocity.set(toPlayer);
         } else {
-            toPlayer.setZero(); // Mantener la distancia
+            targetVelocity.setZero(); // Mantener distancia
         }
 
-        getBody().setLinearVelocity(toPlayer);
+        // Aplicar velocidad suavemente en lugar de un cambio brusco
+        getBody().setLinearVelocity(getBody().getLinearVelocity().lerp(targetVelocity, 0.1f));
 
-        // Rotación hacia el jugador
-        float angle = MathUtils.atan2(toPlayer.y, toPlayer.x);
-        setRotation(MathUtils.radiansToDegrees * angle - 90);
-
+        // Disparo
         shootTimer += delta;
         if (shootTimer >= shootInterval) {
             shootTimer = 0;
-            Vector2 shootDirection = new Vector2(playerPosition).sub(getBody().getPosition()).nor();
-            //gameScene.getBulletManager().addEnemyBullet(getBody().getPosition().x, getBody().getPosition().y, shootDirection);
-            bulletManager.addBullet(getBody().getPosition().x, getBody().getPosition().y, shootDirection, true);
-            //sound.play();
+            if (MathUtils.random() <= 0.3f) { // 30% de probabilidad
+                Vector2 shootDirection = new Vector2(playerPosition).sub(getBody().getPosition()).nor();
+                bulletManager.addBullet(getBody().getPosition().x, getBody().getPosition().y, shootDirection, true);
+            }
         }
     }
 

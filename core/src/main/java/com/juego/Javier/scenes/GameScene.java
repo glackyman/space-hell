@@ -156,6 +156,9 @@ public class GameScene extends ScreenAdapter {
             currentWave++;
             gameRecords.updateWave(currentWave);
             Gdx.input.setInputProcessor(powerUpScreen.getStage());
+
+            //playerShip.getBody().setTransform(0, 0, 0);
+            //joystick.reset();
         }
 
         // Manejar el menú de power-ups
@@ -169,6 +172,27 @@ public class GameScene extends ScreenAdapter {
                 waveManager.startNextWave(playerShip.getBody().getPosition());
             }
         }
+
+        if (playerShip.isDead()) {
+            currentDeaths = currentDeaths + 1;
+            gameRecords.updateDeaths(currentDeaths);
+            // Marcar todos los enemigos y balas para eliminación
+            for (EnemyShip enemy : enemyManager.getEnemies()) {
+                enemy.markForRemoval();
+            }
+            for (Bullet bullet : bulletManager.getBullets()) {
+                bullet.markForRemoval();
+            }
+            showingPowerUpSelection = true;
+            // Esperar a que todos los cuerpos se hayan destruido
+            if (enemyManager.getActiveEnemyCount() == 0 && bulletManager.getBullets().size == 0) {
+                Gdx.app.postRunnable(() -> {
+                    dispose();
+                    gameClass.setScreen(new MainMenuScreen(batch, gameClass));
+                });
+            }
+        }
+
 
         world.step(1 / 60f, 6, 2);
     }
@@ -188,6 +212,9 @@ public class GameScene extends ScreenAdapter {
         backgroundManager.dispose();
         bulletManager.dispose();
         enemyManager.dispose();
+        hud.dispose();
+        dropManager.dispose();
+        Timer.instance().clear();
     }
 
     /**
@@ -240,7 +267,7 @@ public class GameScene extends ScreenAdapter {
 
         joystick.draw();
 
-        debugRenderer.render(world, gameCamera.combined);
+//        debugRenderer.render(world, gameCamera.combined);
     }
 
     public void incrementScore(int points) {
@@ -324,7 +351,7 @@ public class GameScene extends ScreenAdapter {
 
             private void markEnemyForRemoval(Body enemyBody) {
                 for (EnemyShip enemy : enemyManager.getEnemies()) {
-                    if (enemy.getBody() == enemyBody) {
+                    if (enemy.getBody() == enemyBody && enemy != null) {
                         enemy.markForRemoval();
                         break;
 
@@ -334,7 +361,7 @@ public class GameScene extends ScreenAdapter {
 
             private void markBulletForRemoval(Body bulletBody) {
                 for (Bullet bullet : bulletManager.getBullets()) {
-                    if (bullet.getBody() == bulletBody) {
+                    if (bullet.getBody() == bulletBody && bullet != null) {
                         bullet.markForRemoval();
                         break;
                     }
@@ -344,7 +371,7 @@ public class GameScene extends ScreenAdapter {
 
             private void handleEnemyHit(Body enemyBody) {
                 for (EnemyShip enemy : enemyManager.getEnemies()) {
-                    if (enemy.getBody() == enemyBody) {
+                    if (enemy.getBody() == enemyBody && enemy != null) {
                         enemy.hit(playerShip.getBassedDamage());
                         if (enemy.isDestroyed()) {
                             currentKills++;
@@ -358,7 +385,7 @@ public class GameScene extends ScreenAdapter {
 
             private void removalDrop(Body healthDrop) {
                 for (HealthDrop drop : dropManager.getActiveDrops()) {
-                    if (!drop.isCollected() && drop.getBody() == healthDrop) {
+                    if (!drop.isCollected() && drop.getBody() == healthDrop && drop != null) {
                         drop.setCollected(true);
                         playerShip.heal(drop.getHealAmount());
                     }
@@ -371,11 +398,11 @@ public class GameScene extends ScreenAdapter {
 
     private void createWorldBounds() {
         // Definir un cuadrado mayor que WORLD_WIDTH y WORLD_HEIGHT
-        boundsSize = Math.max(WORLD_WIDTH, WORLD_HEIGHT) * 4.5f; // 50% más grande que la dimensión mayor
+        boundsSize = Math.max(WORLD_WIDTH, WORLD_HEIGHT) * 12.5f; // 50% más grande que la dimensión mayor
 
         // Definir offsets para mover el centro a la derecha y arriba
-        float offsetX = 200f; // Desplazamiento a la derecha en metros
-        float offsetY = 200f; // Desplazamiento hacia arriba en metros
+        float offsetX = 500f; // Desplazamiento a la derecha en metros
+        float offsetY = 500f; // Desplazamiento hacia arriba en metros
 
         // Calcular el centro desplazado
         float centerX = WORLD_WIDTH / 2f + offsetX;

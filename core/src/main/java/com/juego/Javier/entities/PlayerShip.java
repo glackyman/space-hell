@@ -51,8 +51,9 @@ public class PlayerShip extends Sprite {
         this.gameClass = gameClass;
         this.gameScene = gameScene;
         createBody();
-        setMaxLife(100);
-        setLife(100);
+        setMaxLife(150);
+        setLife(150);
+        setBassedDamage(20f);
         // Inicialmente el daño base se iguala a baseDamage
     }
 
@@ -220,7 +221,7 @@ public class PlayerShip extends Sprite {
         setLife(getLife() - damage);
         if (getLife() <= 0) {
             setLife(0);
-            //isDead = true;
+            isDead = true;
         }
     }
 

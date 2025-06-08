@@ -73,6 +73,8 @@ public class PowerUpSelectionScreen {
                 return "Piercing Shots";
             case DOUBLE_PARALLEL:
                 return "Parallel Shot";
+            case DAMAGE:
+                return "Damage";
             default:
                 type= PowerUp.Type.HEALTH_BOOST;
                 return "Health+";

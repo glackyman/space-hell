@@ -58,6 +58,8 @@ public class MainMenuScreen implements Screen {
         TextButton settingsButton = new TextButton(bundle.get("settings"), buttonStyle);
         TextButton exitButton = new TextButton(bundle.get("exit"), buttonStyle);
         TextButton recordsButton = new TextButton(bundle.get("records"), buttonStyle);
+        TextButton creditsButton = new TextButton(bundle.get("credits"), buttonStyle);
+        TextButton helpButton = new TextButton(bundle.get("help"), buttonStyle);
 
         // Listeners de los botones
         playButton.addListener(new ClickListener() {
@@ -92,6 +94,22 @@ public class MainMenuScreen implements Screen {
             }
         });
 
+        creditsButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Gdx.input.vibrate(10);
+                game.setScreen(new CreditsScene(batch, game)); // Cambia a la pantalla de créditos
+            }
+        });
+
+        helpButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                Gdx.input.vibrate(10);
+                game.setScreen(new HelpScreen(batch, game)); // Cambia a la pantalla de ayuda
+            }
+        });
+
         // Crear una tabla y agregar los botones
         Table table = new Table();
         table.setFillParent(true);
@@ -100,6 +118,8 @@ public class MainMenuScreen implements Screen {
         table.add(playButton).width(600).height(120).pad(20).row();
         table.add(settingsButton).width(600).height(120).pad(20).row();
         table.add(recordsButton).width(600).height(120).pad(20).row();
+        table.add(creditsButton).width(600).height(120).pad(20).row();
+        table.add(helpButton).width(600).height(120).pad(20).row();
         table.add(exitButton).width(600).height(120).pad(20);
 
         stage.addActor(table);

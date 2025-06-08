@@ -56,6 +56,8 @@ public class EnemyManager {
         if (enemiesDefeated >= enemiesToSpawn) {
             startNewWave();
         }
+
+        avoidOverlapping();
     }
 
     public void render(SpriteBatch batch) {
@@ -69,24 +71,38 @@ public class EnemyManager {
 
         EnemyShip enemy;
         float spawnChance = MathUtils.random();
+        Vector2 spawnPosition = getSpawnPosition(position, 200); // Nueva posición con distancia mínima
 
         if (wave < 3) {
-            enemy = new ShooterEnemy(world, bulletManager,dropManager);
+            enemy = new ShooterEnemy(world, bulletManager, dropManager);
         } else if (spawnChance < 0.5f) {
-            enemy = new ShooterEnemy(world, bulletManager,dropManager);
+            enemy = new ShooterEnemy(world, bulletManager, dropManager);
         } else if (spawnChance < 0.8f) {
-            enemy = new KamikazeEnemy(world,dropManager);
+            enemy = new KamikazeEnemy(world, dropManager);
         } else {
             if (RotationEnemy.getOrbitingEnemies() < 3) {
-                enemy = new RotationEnemy(world, playerShip,dropManager);
+                enemy = new RotationEnemy(world, playerShip, dropManager);
             } else {
-                enemy = new ShooterEnemy(world, bulletManager,dropManager);
+                enemy = new ShooterEnemy(world, bulletManager, dropManager);
             }
         }
 
-        enemy.getBody().setTransform(position, 0);
+        enemy.getBody().setTransform(spawnPosition, 0);
         enemies.add(enemy);
         enemiesSpawned++;
+    }
+
+    private Vector2 getSpawnPosition(Vector2 playerPosition, float minDistance) {
+        Vector2 spawnPosition;
+        do {
+            float angle = MathUtils.random(0, 360) * MathUtils.degreesToRadians;
+            float distance = MathUtils.random(minDistance, minDistance + 50); // Distancia aleatoria para variedad
+            spawnPosition = new Vector2(
+                playerPosition.x + MathUtils.cos(angle) * distance,
+                playerPosition.y + MathUtils.sin(angle) * distance
+            );
+        } while (spawnPosition.dst2(playerPosition) < minDistance * minDistance); // Asegurar distancia mínima
+        return spawnPosition;
     }
 
     private void startNewWave() {
@@ -94,6 +110,24 @@ public class EnemyManager {
         enemiesToSpawn += 3; // Aumentar enemigos por oleada
         enemiesSpawned = 0;
         enemiesDefeated = 0;
+    }
+
+    private void avoidOverlapping() {
+        for (int i = 0; i < enemies.size; i++) {
+            EnemyShip enemyA = enemies.get(i);
+            for (int j = i + 1; j < enemies.size; j++) {
+                EnemyShip enemyB = enemies.get(j);
+
+                Vector2 diff = new Vector2(enemyA.getBody().getPosition()).sub(enemyB.getBody().getPosition());
+                float distance = diff.len();
+
+                if (distance < 3f) { // Distancia mínima entre enemigos
+                    diff.nor().scl(20f);
+                    enemyA.getBody().applyForceToCenter(diff, true);
+                    enemyB.getBody().applyForceToCenter(diff.scl(-1), true); // Enemigos se repelen mutuamente
+                }
+            }
+        }
     }
 
     public void dispose() {

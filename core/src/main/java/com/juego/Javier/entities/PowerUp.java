@@ -19,7 +19,7 @@ public class PowerUp {
         VELOCITY,
         PIERCING,
         DOUBLE_PARALLEL,
-        DOUBLE_LINE
+        DAMAGE
     }
 
     private final Type type;
@@ -45,7 +45,7 @@ public class PowerUp {
 
             case HEALTH_BOOST:
                 int currentMaxLife = (int) player.getMaxLife();
-                int healthIncrease = (int) (currentMaxLife * 0.2f);
+                int healthIncrease = (int) (currentMaxLife * 2.2f);
                 player.setMaxLife(currentMaxLife + healthIncrease);
                 player.heal(healthIncrease);
                 break;
@@ -56,7 +56,8 @@ public class PowerUp {
             case DOUBLE_PARALLEL:
                 bulletManager.upgradeShoot();
                 break;
-            case DOUBLE_LINE:
+            case DAMAGE:
+                player.setBassedDamage(player.getBassedDamage() * 1.25f);
                 break;
         }
     }

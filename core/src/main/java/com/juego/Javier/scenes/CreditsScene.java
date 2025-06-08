@@ -4,12 +4,12 @@ import static com.juego.Javier.GameClass.bundle;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
@@ -17,30 +17,28 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.juego.Javier.GameClass;
-import com.juego.Javier.entities.GameRecords;
 
-public class RecordsScreen implements Screen {
+public class CreditsScene implements Screen {
     private GameClass game;
     private Stage stage;
     private SpriteBatch batch;
     private Texture backgroundTexture;
-    private GameRecords records;
-
     private TextureAtlas atlas;
     private Skin skin;
 
-    public RecordsScreen(SpriteBatch batch, GameClass game) {
+    public CreditsScene(SpriteBatch batch, GameClass game) {
         this.game = game;
         this.batch = batch;
-        this.records = new GameRecords();
         backgroundTexture = new Texture(Gdx.files.internal("background/space_Background_4096x2048.png"));
     }
 
     @Override
     public void show() {
+        // Crear la etapa y configurar el procesador de entrada
         stage = new Stage(new ScreenViewport());
         Gdx.input.setInputProcessor(stage);
 
@@ -48,21 +46,29 @@ public class RecordsScreen implements Screen {
         atlas = new TextureAtlas(Gdx.files.internal("ui/uiatlas.atlas"));
         skin = new Skin(atlas);
 
+        // Crear una fuente para el texto
         BitmapFont font = new BitmapFont();
-        font.getData().setScale(2f);
+        font.getData().setScale(2.0f); // Ajustar el tamaño de la fuente
 
-        // Tabla principal
-        Table mainTable = new Table();
-        mainTable.setFillParent(true);
-        mainTable.center();
+        // Crear un estilo para la etiqueta
+        Label.LabelStyle labelStyle = new Label.LabelStyle();
+        labelStyle.font = font;
 
-        // Etiquetas de records
-        Label.LabelStyle labelStyle = new Label.LabelStyle(font, Color.WHITE);
+        // Crear el texto de los créditos
+        // Crear el texto de los créditos usando el bundle
+        String creditsText = bundle.get("credits") + "\n\n"
+            + bundle.get("creditsDevelopedBy") + "\n"
+            + bundle.get("creditsGraphics") + "\n"
+            + bundle.get("creditsMusic") + "\n"
+            + bundle.get("creditsSpecialThanks");
+        Label creditsLabel = new Label(creditsText, labelStyle);
+        creditsLabel.setAlignment(Align.center);
 
-        Label titleLabel = new Label(bundle.get("records").toUpperCase(), labelStyle);
-        Label killsLabel = new Label(bundle.get("kills") + " " + records.getMaxKills(), labelStyle);
-        Label deathsLabel = new Label(bundle.get("deaths") + " " + records.getMaxDeaths(), labelStyle);
-        Label waveLabel = new Label(bundle.get("waveInfo") + " " + records.getHighestWave(), labelStyle);
+        // Crear el estilo del botón usando la skin
+        TextButton.TextButtonStyle buttonStyle = new TextButton.TextButtonStyle();
+        buttonStyle.up = skin.getDrawable("button_up"); // Usar la textura "button_up" del atlas
+        buttonStyle.down = skin.getDrawable("button_down"); // Usar la textura "button_down" del atlas
+        buttonStyle.font = font;
 
         // Botón de regreso
         TextButton.TextButtonStyle backButtonStyle = new TextButton.TextButtonStyle();
@@ -75,12 +81,9 @@ public class RecordsScreen implements Screen {
             @Override
             public void clicked(InputEvent event, float x, float y) {
                 Gdx.input.vibrate(80);
-
                 game.setScreen(new MainMenuScreen(batch, game)); // Volver al menú principal
             }
         });
-
-        // Contenedor para el botón de regreso arriba a la izquierda
         Table backButtonTable = new Table();
         backButtonTable.top().left();
         backButtonTable.setFillParent(true);
@@ -89,66 +92,59 @@ public class RecordsScreen implements Screen {
             .align(Align.topLeft)
             .row();
 
-        // Añadir elementos a la tabla principal
-        mainTable.add(titleLabel).padBottom(50).row();
-        mainTable.add(killsLabel).padBottom(20).row();
-        mainTable.add(deathsLabel).padBottom(20).row();
-        mainTable.add(waveLabel).padBottom(50).row();
+// Crear una tabla para organizar los créditos
+        Table table = new Table();
+        table.setFillParent(true);
+        table.center();
 
-        // Añadir actores al stage
-        stage.addActor(mainTable);
-        stage.addActor(backButtonTable); // Agregar la tabla del botón de regreso
-    }
+// Añadir la etiqueta de créditos a la tabla
+        table.add(creditsLabel).width(800).pad(20);
 
+// Añadir la tabla a la etapa
+        stage.addActor(table);
 
-    private TextButton.TextButtonStyle createButtonStyle(BitmapFont font) {
-        TextureAtlas atlas = new TextureAtlas(Gdx.files.internal("ui/uiatlas.atlas"));
-        Skin skin = new Skin(atlas);
+// Posicionar el botón en la esquina superior izquierda
+        backButton.setPosition(20, Gdx.graphics.getHeight() - 100); // Ajusta el valor Y según el tamaño del botón
 
-        TextButton.TextButtonStyle style = new TextButton.TextButtonStyle();
-        style.up = skin.getDrawable("button_up");
-        style.down = skin.getDrawable("button_down");
-        style.font = font;
-        return style;
+// Añadir el botón a la etapa directamente
+        stage.addActor(backButtonTable);
+
     }
 
     @Override
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        // Dibujar el fondo
         batch.begin();
         batch.draw(backgroundTexture, 0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
         batch.end();
 
+        // Dibujar la etapa
         stage.act(delta);
         stage.draw();
     }
 
     @Override
     public void resize(int width, int height) {
-
+        stage.getViewport().update(width, height, true);
     }
 
     @Override
     public void pause() {
-
     }
 
     @Override
     public void resume() {
-
     }
 
     @Override
     public void hide() {
-
+        dispose();
     }
 
     @Override
     public void dispose() {
-
+        stage.dispose();
     }
-
-    // Resto de métodos de Screen (igual que MainMenuScreen)
-    // ... resize(), pause(), resume(), hide(), dispose() ...
 }

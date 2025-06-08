@@ -99,7 +99,7 @@ public class Bullet extends Sprite {
         body.createFixture(fixtureDef).setUserData("bullet");
         shape.dispose();
 
-        setSpeed(isEnemyBullet ? SPEED * 0.07f : SPEED, direction);
+        setSpeed(isEnemyBullet ? SPEED : SPEED, direction);
         body.setAngularVelocity(direction.angleDeg());
     }
 

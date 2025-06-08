@@ -18,6 +18,8 @@ public class BulletManager {
         this.world = world;
         this.bullets = new Array<>();
         this.gameCam = gameCam;
+
+
     }
 
     public void update(float delta) {
@@ -48,7 +50,10 @@ public class BulletManager {
     public void dispose() {
         // Liberar recursos de todas las balas
         for (Bullet bullet : bullets) {
-            bullet.dispose();
+            if (bullet.getBody() != null) {
+                world.destroyBody(bullet.getBody());
+                bullet.dispose();
+            }
         }
         bullets.clear();
     }
@@ -61,25 +66,6 @@ public class BulletManager {
         }
     }
 
-    public void addBullet(float x, float y, Vector2 direction) {
-        switch (shootLevel) {
-            case 1:
-                bullets.add(new Bullet(world, x, y, direction, gameCam));
-                break;
-            case 2:
-                // Doble disparo
-                bullets.add(new Bullet(world, x, y, direction.cpy().rotateDeg(10), gameCam));
-                bullets.add(new Bullet(world, x, y, direction.cpy().rotateDeg(-10), gameCam));
-                break;
-            case 3:
-                // Triple disparo
-                bullets.add(new Bullet(world, x, y, direction, gameCam));
-                bullets.add(new Bullet(world, x, y, direction.cpy().rotateDeg(15), gameCam));
-                bullets.add(new Bullet(world, x, y, direction.cpy().rotateDeg(-15), gameCam));
-                break;
-        }
-    }
-
     public void addBullet(float x, float y, Vector2 direction, boolean isEnemy) {
         switch (shootLevel) {
             case 1:
@@ -87,17 +73,26 @@ public class BulletManager {
                 break;
             case 2:
                 // Doble disparo
-                bullets.add(new Bullet(world, x, y, direction.cpy().rotateDeg(10), gameCam, isEnemy));
-                bullets.add(new Bullet(world, x, y, direction.cpy().rotateDeg(-10), gameCam, isEnemy));
+                if (!isEnemy) {
+                    bullets.add(new Bullet(world, x, y, direction.cpy().rotateDeg(10), gameCam, isEnemy));
+                    bullets.add(new Bullet(world, x, y, direction.cpy().rotateDeg(-10), gameCam, isEnemy));
+                } else {
+                    bullets.add(new Bullet(world, x, y, direction, gameCam, isEnemy));
+
+                }
                 break;
             case 3:
-                // Triple disparo
-                bullets.add(new Bullet(world, x, y, direction, gameCam));
-                bullets.add(new Bullet(world, x, y, direction.cpy().rotateDeg(15), gameCam, isEnemy));
-                bullets.add(new Bullet(world, x, y, direction.cpy().rotateDeg(-15), gameCam, isEnemy));
+                if (!isEnemy) {
+                    bullets.add(new Bullet(world, x, y, direction, gameCam));
+                    bullets.add(new Bullet(world, x, y, direction.cpy().rotateDeg(15), gameCam, isEnemy));
+                    bullets.add(new Bullet(world, x, y, direction.cpy().rotateDeg(-15), gameCam, isEnemy));
+                } else {
+                    bullets.add(new Bullet(world, x, y, direction, gameCam, isEnemy));
+                }
                 break;
         }
     }
+
     public Array<Bullet> getBullets() {
         return bullets;
     }

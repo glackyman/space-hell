@@ -144,7 +144,7 @@ public class RotationEnemy extends EnemyShip {
 
     private void recalculateSpeed(PlayerShip player) {
         int activeCount = activeSlowEnemies.size;
-        float newSpeed = 150f * (float) Math.pow(0.5f, activeCount); // Reducción del 50% por enemigo
+        float newSpeed = 150f * (float) Math.pow(0.90f, activeCount); // Reducción del 50% por enemigo
         player.setVelocity(newSpeed);
     }
 
