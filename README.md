@@ -1,35 +1,64 @@
-# SpaceHell
+# Glacky's Adventures (Nombre provisional)
 
-A [libGDX](https://libgdx.com/) project generated with [gdx-liftoff](https://github.com/libgdx/gdx-liftoff).
+Juego móvil desarrollado en **Android Studio** utilizando la librería **LibGDX** y el motor físico **Box2D**. Este proyecto fue realizado como parte del trabajo final de la asignatura de **Desarrollo de Aplicaciones Móviles** del ciclo formativo de grado superior **DAM** (Desarrollo de Aplicaciones Multiplataforma).
 
-This project was generated with a template including simple application launchers and an `ApplicationAdapter` extension that draws libGDX logo.
+## 🕹️ Descripción del Juego
 
-## Platforms
+**Space Hell** es un arcade de supervivencia por rondas en el que deberás enfrentarte a distintos tipos de enemigos mientras mejoras tus habilidades y sobrevives el mayor tiempo posible.
 
-- `core`: Main module with the application logic shared by all platforms.
-- `lwjgl3`: Primary desktop platform using LWJGL3; was called 'desktop' in older docs.
-- `android`: Android mobile platform. Needs Android SDK.
+### 🎮 Mecánicas principales
 
-## Gradle
+- **Sistema de rondas:** 
+  - Cada ronda genera una cantidad creciente de enemigos.
+  - La ronda termina al eliminar a todos los enemigos.
+  - Entre rondas, el juego se pausa y puedes elegir entre **3 habilidades** para mejorar tu personaje.
 
-This project uses [Gradle](https://gradle.org/) to manage dependencies.
-The Gradle wrapper was included, so you can run Gradle tasks using `gradlew.bat` or `./gradlew` commands.
-Useful Gradle tasks and flags:
+- **Tipos de enemigos:**
+  - **Kamikazes:** Se lanzan directamente contra el jugador.
+  - **Shooters:** Disparan a distancia y siguen al jugador desde lejos.
+  - **Orbitales:** Enemigos que orbitan alrededor del jugador, reduciendo su velocidad al contacto.
 
-- `--continue`: when using this flag, errors will not stop the tasks from running.
-- `--daemon`: thanks to this flag, Gradle daemon will be used to run chosen tasks.
-- `--offline`: when using this flag, cached dependency archives will be used.
-- `--refresh-dependencies`: this flag forces validation of all dependencies. Useful for snapshot versions.
-- `android:lint`: performs Android project validation.
-- `build`: builds sources and archives of every project.
-- `cleanEclipse`: removes Eclipse project data.
-- `cleanIdea`: removes IntelliJ project data.
-- `clean`: removes `build` folders, which store compiled classes and built archives.
-- `eclipse`: generates Eclipse project data.
-- `idea`: generates IntelliJ project data.
-- `lwjgl3:jar`: builds application's runnable jar, which can be found at `lwjgl3/build/libs`.
-- `lwjgl3:run`: starts the application.
-- `test`: runs unit tests (if any).
+- **Controles optimizados para móvil:** Movimiento mediante joystick virtual y diparo automatico con el movimiento.
 
-Note that most tasks that are not specific to a single project can be run with `name:` prefix, where the `name` should be replaced with the ID of a specific project.
-For example, `core:clean` removes `build` folder only from the `core` project.
+### 🧠 Progresión
+
+- Elección de habilidades al finalizar cada ronda (mejoras ofensivas, defensivas o de movilidad).
+- Incremento de dificultad progresiva.
+
+### 🏆 Sistema de logros y estadísticas
+
+El juego guarda información persistente sobre:
+
+- Muertes
+- Número total de enemigos eliminados
+- Rondas superadas
+
+### ⚙️ Configuración
+
+- Soporte multilingüe (Español,Ingles,Polaco)
+- Ajustes de sonido y música
+- Todos los ajustes se **guardan automáticamente** entre sesiones.
+
+## 💾 Tecnología utilizada
+
+- **Android Studio**
+- **Java**
+- **LibGDX**
+- **Box2D (física 2D)**
+- Guardado local con preferencias compartidas (SharedPreferences)
+
+## 📱 Plataforma objetivo
+
+- Dispositivos Android
+
+## 🧑‍🎓 Autoría
+
+Proyecto desarrollado como parte del **trabajo final** de la asignatura de **Desarrollo de Aplicaciones Móviles** en el **Ciclo Superior de DAM** (Desarrollo de Aplicaciones Multiplataforma).
+
+## ✅ Estado del proyecto
+
+✔️ Funcional  
+🧪 En pruebas para balance y posibles mejoras de UI
+
+---
+
